@@ -18,7 +18,8 @@ const toolbox = [
       { id: "common_python", label: "Python Function", type: "function", color: "#16A085" },
       { id: "common_http", label: "HTTP Request", type: "function", color: "#16A085" },
       { id: "common_webhook", label: "Webhook", type: "function", color: "#16A085" },
-      { id: "common_time", label: "Date & Time", type: "function", color: "#16A085" }
+      { id: "common_time", label: "Date & Time", type: "function", color: "#16A085" },
+      { id: "common_switch", label: "Switch", type: "function", color: "#16A085" }
     ]
   },
   {

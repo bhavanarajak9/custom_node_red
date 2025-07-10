@@ -11,6 +11,8 @@ import KafkaTriggerFields from'./nodeFields/trigger/KafkaTriggerFields';
 
 import './propertyPanel.css';
 import WebHooksFields from './nodeFields/trigger/WebHookFields';
+import Pythonsettingfunction from './nodeFields/common/python_function/python_setting_function';
+import Pythoninputfunction from './nodeFields/common/python_function/python_input_function';
 
 const PropertyPanel = ({ node, onUpdateNode }) => {
   const [settingsForm] = Form.useForm();
@@ -121,6 +123,7 @@ const handleSave = async () => {
       case 'common_http':
         return <HttpFields />;
       case 'common_python':
+        return < Pythoninputfunction/>
       case 'common_webhook':
       case 'common_time':
         return <FunctionFields />;
@@ -137,16 +140,7 @@ const handleSave = async () => {
         return <p className="text-gray-400 text-sm">No inputs required for manual trigger.</p>;
       case 'common_http':
       case 'common_python':
-        return (
-          <>
-            <Form.Item label="Input Key" name="inputKey" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Input Value" name="inputValue" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-          </>
-        );
+        return <Pythonsettingfunction/>
       default:
         return <p className="text-gray-400 text-sm">No input fields defined.</p>;
     }
