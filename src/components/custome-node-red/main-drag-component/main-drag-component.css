@@ -1,0 +1,64 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.node {
+  position: absolute;
+  width: 120px;
+  height: 40px;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: move;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.node-label {
+  z-index: 1;
+}
+.node.selected {
+  box-shadow: 0 0 0 3px #409eff; /* blue border */
+  z-index: 10;
+}
+
+.node-input,
+.node-output {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.node-input {
+  left: -6px;
+}
+
+.node-output {
+  right: -6px;
+}
+
+.connection-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.node-input:hover {
+  background-color: #ff0;
+  cursor: crosshair;
+}

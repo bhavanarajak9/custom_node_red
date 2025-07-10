@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  node-red-ui:
+    image: node-red-ui
+    ports:
+      - "80:80"
+  postgres:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+  redis:
+    image: redis:7.2-bookworm
+    ports:
+      - "6379:6379"

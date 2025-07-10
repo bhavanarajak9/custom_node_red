@@ -1,0 +1,102 @@
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  outline: none;
+  min-width: 160px;
+}
+
+.input:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.3);
+}
+
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* ✅ ensures vertical centering */
+  padding: 12px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* spacing between filter + workflow group */
+}
+
+.workflow-group {
+  display: flex;
+  align-items: center; /* ✅ horizontally align label + input */
+  gap: 8px;
+}
+
+.workflow-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap;
+}
+
+.workflow-input {
+  width: 300px;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.settings-btn {
+  background-color: #6366f1;
+}
+
+.settings-btn:hover {
+  background-color: #4f46e5;
+}
+
+.debug-btn {
+  background-color: #3b82f6;
+}
+
+.debug-btn:hover {
+  background-color: #2563eb;
+}
+
+.deploy-btn {
+  background-color: #8b5cf6;
+}
+
+.deploy-btn:hover {
+  background-color: #7c3aed;
+}

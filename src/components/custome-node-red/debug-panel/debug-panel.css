@@ -1,0 +1,39 @@
+.debug-panel {
+  border-top: 2px solid #ccc;
+  padding: 10px;
+  height: 130px;
+  background-color: #f9f9ff;
+  font-family: monospace;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.debug-header {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.debug-log-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  scroll-behavior: smooth;
+}
+
+.debug-log {
+  background-color: #fff;
+  padding: 5px 10px;
+  margin-bottom: 4px;
+  border-left: 3px solid #007bff;
+  border-radius: 3px;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.debug-empty {
+  color: #999;
+  font-style: italic;
+}
