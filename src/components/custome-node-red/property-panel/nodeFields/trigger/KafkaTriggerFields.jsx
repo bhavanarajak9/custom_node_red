@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Input, Form, Select, Switch } from 'antd';
 
@@ -62,6 +62,7 @@ const DescriptionLabel = styled.div`
   font-size: 14px;
   color: #333;
 `;
+
 const StyledInput = styled(Input)`
   flex: 1;
   background-color: #f5f5f5;
@@ -69,9 +70,8 @@ const StyledInput = styled(Input)`
 `;
 
 const KafkaTriggerFields = () => {
-    const [ssl, setSsl] = useState(true);
-    const [auth, setAuth] = useState(true);
-    console.log(Form,"form")
+    const auth = Form.useWatch('auth');
+    const ssl = Form.useWatch('ssl');
 
     return (
         <>
@@ -86,85 +86,91 @@ const KafkaTriggerFields = () => {
                 </Form.Item>
             </FormRow>
 
-            <Form.Item name="topic" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
-                <FormRow>
-                    <Label>Topic</Label>
+            <FormRow>
+                <Label>Topic</Label>
+                <Form.Item name="topic" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
                     <FullWidthInput placeholder="topic-name" />
-                </FormRow>
-            </Form.Item>
+                </Form.Item>
+            </FormRow>
 
-            <Form.Item name="groupId" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
-                <FormRow>
-                    <Label>Group ID</Label>
+            <FormRow>
+                <Label>Group ID</Label>
+                <Form.Item name="groupId" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
                     <FullWidthInput placeholder="wf-kafka-0" />
-                </FormRow>
-            </Form.Item>
+                </Form.Item>
+            </FormRow>
 
-            <Form.Item name="clientId" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
-                <FormRow>
-                    <Label>Client ID</Label>
+            <FormRow>
+                <Label>Client ID</Label>
+                <Form.Item name="clientId" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
                     <FullWidthInput placeholder="my-app" />
-                </FormRow>
-            </Form.Item>
+                </Form.Item>
+            </FormRow>
 
-            <Form.Item name="brokers" initialValue="kafka1:9092,kafka:9092" style={{ marginBottom: 0 }}>
-                <FormRow>
-                    <Label>Brokers</Label>
+            <FormRow>
+                <Label>Brokers</Label>
+                <Form.Item name="brokers" initialValue="kafka1:9092,kafka:9092" style={{ flex: 1, marginBottom: 0 }}>
                     <ReadOnlyInput disabled />
-                </FormRow>
-            </Form.Item>
+                </Form.Item>
+            </FormRow>
 
-            <Form.Item name="ssl" initialValue={ssl} valuePropName="checked" style={{ marginBottom: 0 }}>
-                <ToggleRow>
-                    <Switch checked={ssl} onChange={setSsl} />
-                    <ToggleLabel>SSL</ToggleLabel>
-                </ToggleRow>
-            </Form.Item>
+            <ToggleRow>
+                <Form.Item name="ssl" initialValue={true} valuePropName="checked" style={{ marginBottom: 0 }}>
+                    <Switch />
+                </Form.Item>
+                <ToggleLabel>SSL</ToggleLabel>
+            </ToggleRow>
 
-            <Form.Item name="auth" initialValue={auth} valuePropName="checked" style={{ marginBottom: 0 }}>
-                <ToggleRow>
-                    <Switch checked={auth} onChange={setAuth} />
-                    <ToggleLabel>Authentication</ToggleLabel>
-                </ToggleRow>
-            </Form.Item>
+            <ToggleRow>
+                <Form.Item name="auth" initialValue={true} valuePropName="checked" style={{ marginBottom: 0 }}>
+                    <Switch />
+                </Form.Item>
+                <ToggleLabel>Authentication</ToggleLabel>
+            </ToggleRow>
 
             {auth && (
                 <AuthBox>
-                    <Form.Item name="username" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
-                        <FormRow>
-                            <Label>Username</Label>
+                    <FormRow>
+                        <Label>Username</Label>
+                        <Form.Item name="username" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
                             <FullWidthInput placeholder="username" />
-                        </FormRow>
-                    </Form.Item>
+                        </Form.Item>
+                    </FormRow>
 
-                    <Form.Item name="password" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
-                        <FormRow>
-                            <Label>Password</Label>
+                    <FormRow>
+                        <Label>Password</Label>
+                        <Form.Item name="password" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
                             <FullWidthInput type="password" placeholder="password" />
-                        </FormRow>
-                    </Form.Item>
+                        </Form.Item>
+                    </FormRow>
 
-                    <Form.Item name="saslMechanism" initialValue="Plain" style={{ marginBottom: 0 }}>
-                        <FormRow>
-                            <Label>SASL Mechanism</Label>
+                    <FormRow>
+                        <Label>SASL Mechanism</Label>
+                        <Form.Item name="saslMechanism" initialValue="Plain" style={{ flex: 1, marginBottom: 0 }}>
                             <HalfWidthSelect>
                                 <Option value="Plain">Plain</Option>
                                 <Option value="SCRAM-SHA-256">SCRAM-SHA-256</Option>
                                 <Option value="SCRAM-SHA-512">SCRAM-SHA-512</Option>
                             </HalfWidthSelect>
-                        </FormRow>
-                    </Form.Item>
+                        </Form.Item>
+                    </FormRow>
                 </AuthBox>
             )}
 
             <Form.Item name="description" style={{ marginBottom: 0 }}>
                 <div>
                     <DescriptionLabel>Description:</DescriptionLabel>
-                    <TextArea
-                        placeholder="Run the flow on clicking a button. good for getting started quickly."
-                        rows={4}
-                        style={{ backgroundColor: '#f5f5f5', color: '#333' }}
-                    />
+                    <Form.Item name="description" style={{ flex: 1, marginBottom: 0 }}>
+                        <TextArea
+                            placeholder="Run the flow on clicking a button. good for getting started quickly."
+                            rows={4}
+                            style={{
+                                backgroundColor: '#f5f5f5',
+                                color: '#333',
+                                width: '100%',
+                            }}
+                        />
+                    </Form.Item>
                 </div>
             </Form.Item>
         </>
