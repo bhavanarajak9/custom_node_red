@@ -58,17 +58,21 @@ const SchedulerTriggerFields = React.memo(() => (
 
 
 
-    <Form.Item name="intervalUnit" initialValue="Plain" style={{ marginBottom: 0 }}
-      rules={[{ required: true, message: 'Please select interval type' }]}>
-      <FieldRow>
-        <Label>Trigger Interval</Label>
+    <FieldRow>
+      <Label>Trigger Interval</Label>
+      <Form.Item
+        name="intervalUnit"
+        style={{ flex: 1, marginBottom: 0 }}
+        rules={[{ required: true, message: 'Please select interval type' }]}
+      >
         <StyledSelect placeholder="Select unit">
           <Option value="Seconds">Seconds</Option>
           <Option value="Minutes">Minutes</Option>
           <Option value="Hours">Hours</Option>
         </StyledSelect>
-      </FieldRow>
-    </Form.Item>
+      </Form.Item>
+    </FieldRow>
+
 
     <FieldRow>
       <Label>Between Triggers</Label>
