@@ -6,8 +6,8 @@ import FunctionFields from './nodeFields/functionFields';
 import TriggerFields from './nodeFields/triggerFields';
 import HttpFields from './nodeFields/httpFields';
 import ManualTriggerFields from './nodeFields/trigger/ManualTriggerFields';
-import SchedulerTriggerFields from'./nodeFields/trigger/SchedulerTriggerFields';
-import KafkaTriggerFields from'./nodeFields/trigger/KafkaTriggerFields';
+import SchedulerTriggerFields from './nodeFields/trigger/SchedulerTriggerFields';
+import KafkaTriggerFields from './nodeFields/trigger/KafkaTriggerFields';
 
 import './propertyPanel.css';
 import WebHooksFields from './nodeFields/trigger/WebHookFields';
@@ -23,33 +23,36 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
     input: {},
   });
 
-useEffect(() => {
-  if (!node) return;
-  console.log(node,"node")
+  useEffect(() => {
+    if (!node) return;
+    console.log(node, "node")
 
-  // Extract new values
-  const newSettings = node.params?.settings || {};
-  const newInput = node.params?.input || {};
+    // Extract new values
+    // const newSettings = node.params?.settings || {};
+    // const newInput = node.params?.input || {};
 
-  // Reset forms first
-  settingsForm.resetFields();
-  inputForm.resetFields();
+    const newSettings = node?.settings || {};
+    const newInput = node?.input || {};
 
-  // Then update form fields
-  Promise.resolve().then(() => {
-    settingsForm.setFieldsValue(newSettings);
-    inputForm.setFieldsValue(newInput);
-  });
+    // Reset forms first
+    settingsForm.resetFields();
+    inputForm.resetFields();
 
-  // Update local state (optional, for tracking)
-  setLocalFormState({
-    settings: newSettings,
-    input: newInput,
-  });
+    // Then update form fields
+    Promise.resolve().then(() => {
+      settingsForm.setFieldsValue(newSettings);
+      inputForm.setFieldsValue(newInput);
+    });
 
-  // Always start from settings tab
-  setActiveTab("settings");
-}, [node?.id]); // ✅ Depend only on node.id for cleaner behavior
+    // Update local state (optional, for tracking)
+    setLocalFormState({
+      settings: newSettings,
+      input: newInput,
+    });
+
+    // Always start from settings tab
+    setActiveTab("settings");
+  }, [node?.id]); // ✅ Depend only on node.id for cleaner behavior
 
 
   // When tab changes, save current tab data & load new tab data
@@ -73,32 +76,68 @@ useEffect(() => {
     newForm.setFieldsValue(localFormState[key] || {});
   };
 
-const handleSave = async () => {
+  // const handleSave = async () => {
+  //   try {
+  //     const [settingsValues, inputValues] = await Promise.all([
+  //       settingsForm.validateFields().catch(() => ({})),
+  //       inputForm.validateFields().catch(() => ({})),
+  //     ]);
+
+  //     const updatedParams =
+  //       node.type !== 'trigger'
+  //         ? {
+  //           settings: settingsValues,
+  //           input: inputValues,
+  //         }
+  //         : {
+  //           settings: settingsValues,
+  //         };
+
+  //     // Update local state
+  //     setLocalFormState(updatedParams); 
+
+  //       onUpdateNode(node.id, {
+  //         ...node,
+  //         updatedParams,
+  //       });
+  //     // Save to parent node
+  //     // onUpdateNode(node.id, {
+  //     //   ...node,
+  //     //   params: updatedParams,
+  //     // });
+
+  //   } catch (error) {
+  //     console.error("Validation failed:", error);
+  //   }
+  // };
+
+  const handleSave = async () => {
   try {
     const [settingsValues, inputValues] = await Promise.all([
       settingsForm.validateFields().catch(() => ({})),
       inputForm.validateFields().catch(() => ({})),
     ]);
 
-    const updatedParams =
+    const updatedNode =
       node.type !== 'trigger'
         ? {
+            ...node,
             settings: settingsValues,
             input: inputValues,
           }
         : {
+            ...node,
             settings: settingsValues,
           };
 
-    // Update local state
-    setLocalFormState(updatedParams);
-
-    // Save to parent node
-    onUpdateNode(node.id, {
-      ...node,
-      params: updatedParams,
+    // Update local form state
+    setLocalFormState({
+      settings: settingsValues,
+      input: inputValues,
     });
 
+    // Call update with flat `settings` and `input`
+    onUpdateNode(node.id, updatedNode);
   } catch (error) {
     console.error("Validation failed:", error);
   }
@@ -117,7 +156,7 @@ const handleSave = async () => {
       case 'trigger_kafka':
         return <KafkaTriggerFields />
       case 'trigger_webhook':
-        return<WebHooksFields />
+        return <WebHooksFields />
       case 'common_http':
         return <HttpFields />;
       case 'common_python':
@@ -154,55 +193,55 @@ const handleSave = async () => {
 
   if (!node) return <div className="property-panel-empty">Select a node to edit its properties</div>;
 
-return (
-  <div >
-    <div className="panel-header">Properties</div>
-    <div className="">
-      <Tabs
-        activeKey={activeTab}
-        onChange={handleTabChange}
-        size="small"
-        className="custom-tabs"
-        items={[
-          {
-            key: 'settings',
-            label: (
-              <span>
-                <SlidersOutlined style={{ marginRight: 6 }} />
-                Settings
-              </span>
-            ),
-            children: (
-              <Form form={settingsForm} layout="vertical" className="property-form panel-scroll-wrapper">
-                {renderSettingsFields()}
-                <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
-                  Save
-                </Button>
-              </Form>
-            ),
-          },
-          node.type !== 'trigger' && {
-            key: 'input',
-            label: (
-              <span>
-                <SettingOutlined style={{ marginRight: 6 }} />
-                Inputs
-              </span>
-            ),
-            children: (
-              <Form form={inputForm} layout="vertical" className="property-form panel-scroll-wrapper">
-                {renderInputFields()}
-                <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
-                  Save
-                </Button>
-              </Form>
-            ),
-          },
-        ].filter(Boolean)}
-      />
+  return (
+    <div >
+      <div className="panel-header">Properties</div>
+      <div className="">
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          size="small"
+          className="custom-tabs"
+          items={[
+            {
+              key: 'settings',
+              label: (
+                <span>
+                  <SlidersOutlined style={{ marginRight: 6 }} />
+                  Settings
+                </span>
+              ),
+              children: (
+                <Form form={settingsForm} layout="vertical" className="property-form panel-scroll-wrapper">
+                  {renderSettingsFields()}
+                  <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
+                    Save
+                  </Button>
+                </Form>
+              ),
+            },
+            node.type !== 'trigger' && {
+              key: 'input',
+              label: (
+                <span>
+                  <SettingOutlined style={{ marginRight: 6 }} />
+                  Inputs
+                </span>
+              ),
+              children: (
+                <Form form={inputForm} layout="vertical" className="property-form panel-scroll-wrapper">
+                  {renderInputFields()}
+                  <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
+                    Save
+                  </Button>
+                </Form>
+              ),
+            },
+          ].filter(Boolean)}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
 
 };
 

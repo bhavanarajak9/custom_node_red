@@ -83,25 +83,60 @@ function CustomNodeRed() {
     window.addEventListener('mouseup', handleMouseUp);
   };
 
-  const exportToJSON = () => {
-    const nodeData = droppedNodes.map(({ id, type, x, y, ...rest }) => ({
-      id, type, params: rest.params || {}, x, y
-    }));
+  // const exportToJSON = () => {
+  //   const nodeData = droppedNodes.map(({ id, type, x, y, ...rest }) => ({
+  //     id, type, params: rest.params || {}, x, y
+  //   }));
 
-    const layout = {
-      flowName: flowName,
-      nodes: nodeData,
-      edges: connections
-    };
+  //   const layout = {
+  //     flowName: flowName,
+  //     nodes: nodeData,
+  //     edges: connections
+  //   };
 
-    logDebug('📤 Exported JSON structure to console.');
-    console.log(JSON.stringify(layout, null, 2));
+  //   logDebug('📤 Exported JSON structure to console.');
+  //   console.log(JSON.stringify(layout, null, 2));
+  // };
+
+  
+const exportToJSON = () => {
+  const workflowObject = {
+    id: "unique_workflow_id",
+    name: flowName || "My Workflow Name",
+    description: "descriptions",
+    global_variables: {
+      owner: "engineer",
+      email: ["engineer@aidentyx.com"],
+      retries: 1,
+      retry_delay: "5m",
+      db1_url: ""
+    },
+    settings: {
+      catchup: false,
+      max_active_runs: 1
+    }
   };
+
+  const tasks = droppedNodes.map(({ id, type, x, y, settings = {}, input = {} }) => ({
+    id,
+    type,
+    x,
+    y,
+    settings,
+    input
+  }));
 
   const layout = {
-    nodes: [],
-    edges: []
+    workflowObject,
+    tasks,
+    dependencies: connections
   };
+
+  logDebug('📤 Exported JSON structure to console.');
+  console.log(JSON.stringify(layout, null, 2));
+};
+
+
 
   const loadFromJSON = (layout) => {
     const toolboxMap = {
