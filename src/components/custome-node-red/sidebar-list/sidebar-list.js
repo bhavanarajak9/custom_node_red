@@ -9,7 +9,7 @@ const toolbox = [
       { id: "trigger_manual", label: "Manually", type: "trigger", color: "#E67E22" },
       { id: "trigger_schedule", label: "On a Schedule", type: "trigger", color: "#E67E22" },
       { id: "trigger_kafka", label: "Kafka Trigger", type: "trigger", color: "#E67E22" },
-       { id: "trigger_webhook", label: "Webhook Trigger", type: "trigger", color: "#E67E22" }
+      { id: "trigger_webhook", label: "Webhook Trigger", type: "trigger", color: "#E67E22" }
     ]
   },
   {
@@ -20,6 +20,10 @@ const toolbox = [
       { id: "common_webhook", label: "Webhook", type: "function", color: "#16A085" },
       { id: "common_time", label: "Date & Time", type: "function", color: "#16A085" },
       { id: "common_switch", label: "Switch", type: "function", color: "#16A085" },
+      { id: "common_filter", label: "Filter", type: "function", color: "#16A085" },
+      { id: "common_send_mail", label: "Send Mail", type: "function", color: "#16A085" },
+      { id: "common_loop", label: "loop", type: "function", color: "#16A085" },
+      { id: "common_merge", label: "merge", type: "function", color: "#16A085" },
     ]
   },
   {
