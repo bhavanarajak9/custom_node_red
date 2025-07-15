@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Form, Input, Select, Button } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 
 const { Option } = Select;
 
@@ -22,7 +23,12 @@ const Label = styled.label`
   font-size: 14px;
   color: #333;
 `;
-
+const DescriptionLabel = styled.div`
+  margin-bottom: 4px;
+  font-weight: normal;
+  font-size: 14px;
+  color: #333;
+`;
 const StyledInput = styled(Input)`
   flex: 1;
   background-color: #f5f5f5;
@@ -116,6 +122,16 @@ const Switchsettingfunction = () => {
           Add Condition
         </Button>
       </ConditionBlock>
+      <div style={{ marginTop: 12 }}>
+              <DescriptionLabel>Description:</DescriptionLabel>
+              <Form.Item name="description" style={{ marginBottom: 0 }}>
+                <TextArea
+                  placeholder="Route items depending on defined expression or rules."
+                  rows={4}
+                  style={{ backgroundColor: '#f5f5f5', color: '#333' }}
+                />
+              </Form.Item>
+            </div>
     </Form>
   );
 };

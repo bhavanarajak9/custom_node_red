@@ -17,6 +17,10 @@ import Pythonsettingfunction from'./nodeFields/common/python_function/python_set
 import Pythoninputfunction from'./nodeFields/common/python_function/python_input_function';
 import './propertyPanel.css';
 import Switchsettingfunction from './nodeFields/common/switch_function/switch_setting_function';
+import MailSettingsForm from './nodeFields/common/send_mail/send_mail_function';
+import LoopSettingsForm from './nodeFields/common/Loop/loop_setting_function';
+import Loopinputfunction from './nodeFields/common/Loop/loop_input_function';
+import MergeSettingsForm from './nodeFields/common/merge_function/merge_setting_function';
 
 const PropertyPanel = ({ node, onUpdateNode }) => {
   const [settingsForm] = Form.useForm();
@@ -134,8 +138,15 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
       case 'common_webhook':
       case 'common_time':
         return <FunctionFields />;
-        case 'common_switch':
-          return <Switchsettingfunction/>
+      case 'common_switch':  
+      case 'common_filter':
+        return <Switchsettingfunction/>
+      case 'common_send_mail':
+        return <MailSettingsForm/>
+      case 'common_loop': 
+        return <LoopSettingsForm/> 
+      case 'common_merge': 
+        return <MergeSettingsForm/>
       default:
         return <p className="text-gray-400 text-sm">No configurable settings.</p>;
     }
@@ -179,8 +190,10 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
         );
       case 'common_http':
       case 'common_switch':
-        
+      case 'common_filter':
       case 'common_python':
+      case 'common_merge':
+      case 'common_send_mail':
         return (
           <Form.Item
             label="Inputs"
@@ -195,6 +208,20 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
             />
           </Form.Item>
         );
+        case 'common_loop': 
+        return (
+        <Form.Item
+        label="Input"
+        name="inputsArray"
+        rules={[{ required: true, message: 'Please provide at least one input.' }]}
+      >
+        <Loopinputfunction
+          inputs={watchedInputsArray}
+          onChangeInputs={(newInputs) => {
+            inputForm.setFieldsValue({ inputsArray: newInputs });
+          }}
+        />
+      </Form.Item>);
       default:
         return <p className="text-gray-400 text-sm">No input fields defined.</p>;
     }
