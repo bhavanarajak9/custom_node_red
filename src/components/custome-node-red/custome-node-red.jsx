@@ -7,6 +7,8 @@ import './main-drag-component/main-drag-component.css';
 import './custome-node-red.css';
 import { DndContext } from '@dnd-kit/core';
 import HeaderBar from "./Header/header";
+import NodeletsManagementModal from './models/NodeletsManagementModal';
+import GlobalSettingsModal from './models/GlobalSettingsModal';
 
 function CustomNodeRed() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -15,6 +17,16 @@ function CustomNodeRed() {
   const [tempConnection, setTempConnection] = useState(null);
   const [flowName, setFlowName] = useState("");
   const [debugLogs, setDebugLogs] = useState([]); // ✅ Debug logs state
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [globalSettings, setGlobalSettings] = useState([
+    { name: 'KDB_SESSION_URL', value: 'http://localhost:8083', description: 'kdb.ai session url' },
+    { name: 'SMTP_SERVER', value: '', description: '' }
+  ]);
+
+  const [nodeletModalOpen, setNodeletModalOpen] = useState(false);
+  const [nodelets, setNodelets] = useState([
+    { name: "Custom Node", version: "0.1", description: "custom logic by customer" },
+  ]);
 
   const logDebug = (msg) => {
     setDebugLogs(prev => [...prev, msg]);
@@ -97,44 +109,117 @@ function CustomNodeRed() {
   //   logDebug('📤 Exported JSON structure to console.');
   //   console.log(JSON.stringify(layout, null, 2));
   // };
+  const exportToJSON = () => {
+    const workflowObject = {
+      id: "unique_workflow_id",
+      name: flowName || "My Workflow Name",
+      description: "descriptions",
+      global_variables: {
+        owner: "engineer",
+        email: ["engineer@aidentyx.com"],
+        retries: 1,
+        retry_delay: "5m",
+        db1_url: ""
+      },
+      settings: {
+        catchup: false,
+        max_active_runs: 1
+      }
+    };
 
-  
-const exportToJSON = () => {
-  const workflowObject = {
-    id: "unique_workflow_id",
-    name: flowName || "My Workflow Name",
-    description: "descriptions",
-    global_variables: {
-      owner: "engineer",
-      email: ["engineer@aidentyx.com"],
-      retries: 1,
-      retry_delay: "5m",
-      db1_url: ""
-    },
-    settings: {
-      catchup: false,
-      max_active_runs: 1
-    }
+    // 🔁 Map each node's downstream dependencies
+    const dependenciesMap = {};
+    connections.forEach(({ from, to }) => {
+      if (!dependenciesMap[to]) dependenciesMap[to] = [];
+      dependenciesMap[to].push(from);
+    });
+
+    const tasks = droppedNodes.map((node) => {
+      const {
+        id,
+        type,
+        label,
+        input = {},
+        settings = {},
+        code = "",
+        output = { result: "{{ result }}" }
+      } = node;
+
+      const upstreams = dependenciesMap[id] || [];
+      const finalInput = { ...input };
+
+      // 💡 Auto-inject interpolated input from upstream node's output
+      if (upstreams.length > 0) {
+        upstreams.forEach((fromId, idx) => {
+          const outputKeys = Object.keys(output);
+          const key = outputKeys[idx] || "data";
+          finalInput[key] = `{{ upstream_output.${fromId}.${key} }}`;
+        });
+      }
+
+      return {
+        id,
+        group: "Workflow Automation",
+        name: label || id,
+        type: type === "function" ? "python" : type,
+        input: finalInput,
+        output,
+        code,
+        settings
+      };
+    });
+
+    const finalJSON = {
+      id: workflowObject.id,
+      name: workflowObject.name,
+      description: workflowObject.description,
+      global_variables: workflowObject.global_variables,
+      settings: workflowObject.settings,
+      tasks,
+      dependencies: connections
+    };
+
+    logDebug("📤 Exported Workflow JSON with interpolated inputs:");
+    console.log(JSON.stringify(finalJSON, null, 2));
   };
 
-  const tasks = droppedNodes.map(({ id, type, x, y, settings = {}, input = {} }) => ({
-    id,
-    type,
-    x,
-    y,
-    settings,
-    input
-  }));
 
-  const layout = {
-    workflowObject,
-    tasks,
-    dependencies: connections
-  };
+  // const exportToJSON = () => {
+  //   const workflowObject = {
+  //     id: "unique_workflow_id",
+  //     name: flowName || "My Workflow Name",
+  //     description: "descriptions",
+  //     global_variables: {
+  //       owner: "engineer",
+  //       email: ["engineer@aidentyx.com"],
+  //       retries: 1,
+  //       retry_delay: "5m",
+  //       db1_url: ""
+  //     },
+  //     settings: {
+  //       catchup: false,
+  //       max_active_runs: 1
+  //     }
+  //   };
 
-  logDebug('📤 Exported JSON structure to console.');
-  console.log(JSON.stringify(layout, null, 2));
-};
+  //   const tasks = droppedNodes.map(({ id, type, x, y, settings = {}, input = {} }) => ({
+  //     id,
+  //     type,
+  //     x,
+  //     y,
+  //     settings,
+  //     input
+  //   }));
+
+  //   const layout = {
+  //     workflowObject,
+  //     tasks,
+  //     dependencies: connections
+  //   };
+
+  //   logDebug('📤 Exported JSON structure to console.');
+  //   console.log(JSON.stringify(layout, null, 2));
+  // };
 
 
 
@@ -212,7 +297,24 @@ const exportToJSON = () => {
         onDeploy={exportToJSON}
         flowName={flowName}
         onFlowNameChange={setFlowName}
+        setNodeletModalOpen={()=>setNodeletModalOpen(true)}
+        onGlobalSettingsClick={() => setIsSettingsModalOpen(true)}
       />
+
+      <GlobalSettingsModal
+        open={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        settings={globalSettings}
+        setSettings={setGlobalSettings}
+      />
+
+      <NodeletsManagementModal
+        open={nodeletModalOpen}
+        onClose={() => setNodeletModalOpen(false)}
+        nodelets={nodelets}
+        setNodelets={setNodelets}
+      />
+
 
       <div className="app-layout">
         <div className="sidebar">
