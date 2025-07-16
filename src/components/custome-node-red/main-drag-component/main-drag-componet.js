@@ -32,11 +32,46 @@ const MainDragComponent = ({
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
     };
+    // const renderConnections = () => {
+    //     return connections.map((conn, i) => {
+    //         const from = nodes.find((n) => n.id === conn.from);
+    //         const to = nodes.find((n) => n.id === conn.to);
+    //         if (!from || !to) return null;
+
+    //         const outputOffsetX = 120 + 6;
+    //         const inputOffsetX = -6;
+
+    //         const startX = from.x + outputOffsetX;
+    //         const startY = from.y + 15;
+
+    //         const endX = to.x + inputOffsetX;
+    //         const endY = to.y + 15;
+
+    //         const path = `M${startX},${startY} C${startX + 50},${startY} ${endX - 50},${endY} ${endX},${endY}`;
+
+    //         return (
+    //             <path
+    //                 key={i}
+    //                 d={path}
+    //                 stroke="orange"
+    //                 fill="none"
+    //                 markerEnd="url(#arrow)"
+    //                 style={{ cursor: 'pointer' }}
+    //                 onClick={(e) => {
+    //                     e.stopPropagation(); // prevent canvas click
+    //                     onNodeSelect({ type: 'edge', from: conn.from, to: conn.to });
+    //                 }}
+    //             />
+    //         );
+    //     });
+    // };
     const renderConnections = () => {
         return connections.map((conn, i) => {
             const from = nodes.find((n) => n.id === conn.from);
             const to = nodes.find((n) => n.id === conn.to);
-            if (!from || !to) return null;
+
+            // ❌ Don't render connection if target node is a trigger
+            if (!from || !to || to.type === 'trigger') return null;
 
             const outputOffsetX = 120 + 6;
             const inputOffsetX = -6;
@@ -58,35 +93,15 @@ const MainDragComponent = ({
                     markerEnd="url(#arrow)"
                     style={{ cursor: 'pointer' }}
                     onClick={(e) => {
-                        e.stopPropagation(); // prevent canvas click
+                        e.stopPropagation();
                         onNodeSelect({ type: 'edge', from: conn.from, to: conn.to });
                     }}
                 />
             );
         });
     };
-
-    // const renderConnections = () => {
-    //     return connections.map((conn, i) => {
-    //         const from = nodes.find((n) => n.id === conn.from);
-    //         const to = nodes.find((n) => n.id === conn.to);
-    //         if (!from || !to) return null;
-
-    //         const outputOffsetX = 120 + 6; // node width + circle radius
-    //         const inputOffsetX = -6; // left of node
-
-    //         const startX = from.x + outputOffsetX;
-    //         const startY = from.y + 15;
-
-    //         const endX = to.x + inputOffsetX;
-    //         const endY = to.y + 15;
-
-    //         const path = `M${startX},${startY} C${startX + 50},${startY} ${endX - 50},${endY} ${endX},${endY}`;
-
-    //         return <path key={i} d={path} stroke="orange" fill="none" markerEnd="url(#arrow)" />;
-    //     });
-    // };
-
+    
+    
     return (
         <div ref={setNodeRef} onClick={() => onNodeSelect(null)} id="canvas" className="canvas">
             <svg className="connection-layer">
@@ -106,25 +121,35 @@ const MainDragComponent = ({
 
                 )}
             </svg>
-
             {nodes.map((node) => (
                 <div
                     key={node.id}
-                    className={`node ${selectedNode?.id === node.id ? 'selected' : ''}`} // ✅ add `selected` class
+                    className={`node ${selectedNode?.id === node.id ? 'selected' : ''}`}
                     style={{ top: node.y, left: node.x, backgroundColor: node.color }}
                     onMouseDown={(e) => handleMouseDown(e, node)}
                     onClick={(e) => {
-                        e.stopPropagation();      // Prevents canvas deselection
-                        onNodeSelect(node);       // Select this node
+                        e.stopPropagation();
+                        onNodeSelect(node);
                     }}
                 >
-                    <div className="node-input" onMouseDown={(e) => onStartConnection(e, node, 'input')}></div>
+                    {/* ✅ Only show input dot if not a trigger */}
+                    {node.type !== 'trigger' && (
+                        <div
+                            className="node-input"
+                            onMouseDown={(e) => onStartConnection(e, node, 'input')}
+                        ></div>
+                    )}
+
                     <span className="node-label">{node.label}</span>
-                    <div className="node-output" onMouseDown={(e) => onStartConnection(e, node, 'output')}></div>
+
+                    {/* ✅ Always show output dot (all nodes can connect to next) */}
+                    <div
+                        className="node-output"
+                        onMouseDown={(e) => onStartConnection(e, node, 'output')}
+                    ></div>
                 </div>
             ))}
-
-        </div>
+         </div>
     );
 };
 
