@@ -2,7 +2,7 @@ import React from 'react';
 import './HeaderBar.css';
 import { DownOutlined } from '@ant-design/icons';
 
-const HeaderBar = ({ onDeploy, flowName, onFlowNameChange, onGlobalSettingsClick,setNodeletModalOpen }) => {
+const HeaderBar = ({ onDeploy, flowName, onFlowNameChange, onGlobalSettingsClick,setNodeletModalOpen,onSave }) => {
   return (
     <div className="header-bar">
       <div className="left-section">
@@ -35,7 +35,7 @@ const HeaderBar = ({ onDeploy, flowName, onFlowNameChange, onGlobalSettingsClick
           Nodelets Management
         </button>
         <button className="btn violet-btn">Test</button>
-        <button className="btn violet-btn">Save</button>
+        <button className="btn violet-btn" onClick={onSave}>Save</button>
         <button className="btn violet-btn" onClick={onDeploy}>
           Deploy
         </button>

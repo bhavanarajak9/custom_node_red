@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { useState, memo, useEffect,useRef } from 'react';
 import SidebarList from './sidebar-list/sidebar-list';
 import MainDragComponent from './main-drag-component/main-drag-componet';
 import PropertyPanel from './property-panel/property-panel';
@@ -22,7 +22,13 @@ function CustomNodeRed() {
     { name: 'KDB_SESSION_URL', value: 'http://localhost:8083', description: 'kdb.ai session url' },
     { name: 'SMTP_SERVER', value: '', description: '' }
   ]);
+  const panelRef = useRef();
 
+  const handleHeaderSave = () => {
+    if (panelRef.current && panelRef.current.handleSave) {
+      panelRef.current.handleSave();
+    }
+  };
   const [nodeletModalOpen, setNodeletModalOpen] = useState(false);
   const [nodelets, setNodelets] = useState([
     { name: "Custom Node", version: "0.1", description: "custom logic by customer" },
@@ -299,6 +305,7 @@ function CustomNodeRed() {
         onFlowNameChange={setFlowName}
         setNodeletModalOpen={()=>setNodeletModalOpen(true)}
         onGlobalSettingsClick={() => setIsSettingsModalOpen(true)}
+        onSave={handleHeaderSave}
       />
 
       <GlobalSettingsModal
@@ -368,7 +375,7 @@ function CustomNodeRed() {
           </DndContext>
         </div>
         <div className="properties-panel">
-          <PropertyPanel node={selectedNode} onUpdateNode={handleUpdateNode} />
+          <PropertyPanel ref={panelRef}  node={selectedNode} onUpdateNode={handleUpdateNode} />
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Tabs, Button, Form, Input } from 'antd';
 import { SlidersOutlined, SettingOutlined } from '@ant-design/icons';
 
@@ -13,8 +13,8 @@ import KafkaTriggerFields from './nodeFields/trigger/KafkaTriggerFields';
 import RootCauseAnalystInput from './nodeFields/actionApp/root_cause_analysis/root_cause_analyst_inputs';
 import RootCauseAnalystSettings from './nodeFields/actionApp/root_cause_analysis/root_cause_analyst_setting';
 import WebHooksFields from './nodeFields/trigger/WebHookFields';
-import Pythonsettingfunction from'./nodeFields/common/python_function/python_setting_function';
-import Pythoninputfunction from'./nodeFields/common/python_function/python_input_function';
+import Pythonsettingfunction from './nodeFields/common/python_function/python_setting_function';
+import Pythoninputfunction from './nodeFields/common/python_function/python_input_function';
 import './propertyPanel.css';
 import Switchsettingfunction from './nodeFields/common/switch_function/switch_setting_function';
 import MailSettingsForm from './nodeFields/common/send_mail/send_mail_function';
@@ -22,7 +22,7 @@ import LoopSettingsForm from './nodeFields/common/Loop/loop_setting_function';
 import Loopinputfunction from './nodeFields/common/Loop/loop_input_function';
 import MergeSettingsForm from './nodeFields/common/merge_function/merge_setting_function';
 
-const PropertyPanel = ({ node, onUpdateNode }) => {
+const PropertyPanel = forwardRef(({ node, onUpdateNode }, ref) => {
   const [settingsForm] = Form.useForm();
   const [inputForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('settings');
@@ -92,17 +92,17 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
       const updatedNode =
         node.type !== 'trigger'
           ? {
-              ...node,
-              settings: settingsValues,
-              input: {
-                ...inputValues,
-                inputsArray: inputValues.inputsArray || [],
-              },
-            }
+            ...node,
+            settings: settingsValues,
+            input: {
+              ...inputValues,
+              inputsArray: inputValues.inputsArray || [],
+            },
+          }
           : {
-              ...node,
-              settings: settingsValues,
-            };
+            ...node,
+            settings: settingsValues,
+          };
 
       setLocalFormState({
         settings: settingsValues,
@@ -114,6 +114,10 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
       console.error('Validation failed:', error);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    handleSave,
+  }));
 
   const renderSettingsFields = () => {
     const baseId = node?.id?.split('-')[0];
@@ -134,19 +138,19 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
       case 'action_rca':
         return <RootCauseAnalystSettings />;
       case 'common_python':
-        return < Pythonsettingfunction/>
+        return < Pythonsettingfunction />
       case 'common_webhook':
       case 'common_time':
         return <FunctionFields />;
-      case 'common_switch':  
+      case 'common_switch':
       case 'common_filter':
-        return <Switchsettingfunction/>
+        return <Switchsettingfunction />
       case 'common_send_mail':
-        return <MailSettingsForm/>
-      case 'common_loop': 
-        return <LoopSettingsForm/> 
-      case 'common_merge': 
-        return <MergeSettingsForm/>
+        return <MailSettingsForm />
+      case 'common_loop':
+        return <LoopSettingsForm />
+      case 'common_merge':
+        return <MergeSettingsForm />
       default:
         return <p className="text-gray-400 text-sm">No configurable settings.</p>;
     }
@@ -208,20 +212,20 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
             />
           </Form.Item>
         );
-        case 'common_loop': 
+      case 'common_loop':
         return (
-        <Form.Item
-        label="Input"
-        name="inputsArray"
-        rules={[{ required: true, message: 'Please provide at least one input.' }]}
-      >
-        <Loopinputfunction
-          inputs={watchedInputsArray}
-          onChangeInputs={(newInputs) => {
-            inputForm.setFieldsValue({ inputsArray: newInputs });
-          }}
-        />
-      </Form.Item>);
+          <Form.Item
+            label="Input"
+            name="inputsArray"
+            rules={[{ required: true, message: 'Please provide at least one input.' }]}
+          >
+            <Loopinputfunction
+              inputs={watchedInputsArray}
+              onChangeInputs={(newInputs) => {
+                inputForm.setFieldsValue({ inputsArray: newInputs });
+              }}
+            />
+          </Form.Item>);
       default:
         return <p className="text-gray-400 text-sm">No input fields defined.</p>;
     }
@@ -235,7 +239,6 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
     <div>
       <div className="panel-header">Properties</div>
       <Tabs
-        destroyInactiveTabPane={false}
         activeKey={activeTab}
         onChange={handleTabChange}
         size="small"
@@ -256,9 +259,6 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
                 className="property-form panel-scroll-wrapper"
               >
                 {renderSettingsFields()}
-                <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
-                  Save
-                </Button>
               </Form>
             ),
           },
@@ -277,9 +277,6 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
                 className="property-form panel-scroll-wrapper"
               >
                 {renderInputFields()}
-                <Button type="primary" onClick={handleSave} style={{ marginTop: 16 }}>
-                  Save
-                </Button>
               </Form>
             ),
           },
@@ -287,6 +284,6 @@ const PropertyPanel = ({ node, onUpdateNode }) => {
       />
     </div>
   );
-};
+});
 
 export default PropertyPanel;
